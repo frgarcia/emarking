@@ -1485,6 +1485,56 @@ function xmldb_emarking_upgrade($oldversion) {
         // Emarking savepoint reached.
         upgrade_mod_savepoint(true, 2016071903, 'emarking');
     }
+        if ($oldversion < 2016072900) {
 
+        // Rename field instructions on table emarking_activities to NEWNAMEGOESHERE.
+        $table = new xmldb_table('emarking_activities');
+        $field = new xmldb_field('example', XMLDB_TYPE_TEXT, null, null, null, null, null, 'video_url');
+
+        // Launch rename field instructions.
+        $dbman->rename_field($table, $field, 'instructions');
+
+        $field = new xmldb_field('didacit_suggestions', XMLDB_TYPE_TEXT, null, null, null, null, null, 'userid');
+
+        // Conditionally launch add field didacit_suggestions.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('didactic_instructions', XMLDB_TYPE_TEXT, null, null, null, null, null, 'didacit_suggestions');
+
+        // Conditionally launch add field didactic_instructions.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+          $field = new xmldb_field('language_resources', XMLDB_TYPE_TEXT, null, null, null, null, null, 'didactic_instructions');
+
+        // Conditionally launch add field language_resources.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Emarking savepoint reached.
+        upgrade_mod_savepoint(true, 2016072900, 'emarking');
+    }
+        if ($oldversion < 2016072901) {
+
+        // Rename field didactic_suggestions on table emarking_activities to NEWNAMEGOESHERE.
+        $table = new xmldb_table('emarking_activities');
+        $field = new xmldb_field('didacit_suggestions', XMLDB_TYPE_TEXT, null, null, null, null, null, 'userid');
+
+        // Launch rename field didactic_suggestions.
+        $dbman->rename_field($table, $field, 'didactic_suggestions');
+          $field = new xmldb_field('file');
+
+        // Conditionally launch drop field file.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Emarking savepoint reached.
+        upgrade_mod_savepoint(true, 2016072901, 'emarking');
+    }
     return true;
 }
